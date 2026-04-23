@@ -1,4 +1,4 @@
-name: Auto-Deploy
+name: Auto-Deploy to AKS
 
 on:
   push:
@@ -15,12 +15,16 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
+    - name: Login to ACR
+      run: az acr login --name pythonregistry2024
+    
     - name: Build and push
       run: |
-        docker build -t yourname123.azurecr.io/python-devops-app:${{ github.sha }} .
-        docker push yourname123.azurecr.io/python-devops-app:${{ github.sha }}
+        docker build --platform linux/amd64 -t pythonregistry2024.azurecr.io/python-devops-app:${{ github.sha }} .
+        docker push pythonregistry2024.azurecr.io/python-devops-app:${{ github.sha }}
     
     - name: Deploy to AKS
       run: |
         az aks get-credentials -g devops-rg -n devops-cluster
-        kubectl set image deployment/python-app python-app=yourname123.azurecr.io/python-devops-app:${{ github.sha }}
+        kubectl set image deployment/python-app python-app=pythonregistry2024.azurecr.io/python-devops-app:${{ github.sha }}
+        kubectl rollout status deployment/python-app
