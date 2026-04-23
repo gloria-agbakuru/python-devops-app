@@ -1,0 +1,26 @@
+name: Auto-Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Build and push
+      run: |
+        docker build -t yourname123.azurecr.io/python-devops-app:${{ github.sha }} .
+        docker push yourname123.azurecr.io/python-devops-app:${{ github.sha }}
+    
+    - name: Deploy to AKS
+      run: |
+        az aks get-credentials -g devops-rg -n devops-cluster
+        kubectl set image deployment/python-app python-app=yourname123.azurecr.io/python-devops-app:${{ github.sha }}
