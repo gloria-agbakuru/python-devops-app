@@ -7,8 +7,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return jsonify({
-        'message': 'My DevOps app!',           # Main message
-        'timestamp': datetime.datetime.now().isoformat(),  # Current time
+        'message': 'Auto-deployment is WORKING! 🚀',        'timestamp': datetime.datetime.now().isoformat(),  # Current time
         'version': '1.0'                       # App version
     })
 
