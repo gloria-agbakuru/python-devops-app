@@ -13,10 +13,8 @@ jobs:
     - name: Login to Azure
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Login to ACR
-      run: az acr login --name pythonregistry2024
+        creds: ${{ secrets.AZURE_TOKEN }}
+        # This uses your token instead of service principal
     
     - name: Build and push
       run: |
